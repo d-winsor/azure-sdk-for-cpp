@@ -1,0 +1,46 @@
+name: MSVC-Analysis
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  triplet: x64-windows
+  config: x64-DebugWithTests
+  cmake-args: -DINSTALL_GTEST=OFF -DBUILD_TESTING=ON -DBUILD_TRANSPORT_CURL=ON -DBUILD_STORAGE_SAMPLES=ON
+  build-dir: {{ github.workspace }}/out/build/{{ env.config }}
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Setup Vcpkg and find MSVC Compiler
+      uses: lukka/run-vcpkg@v7
+      with:
+        setupOnly: true
+        vcpkgGitCommitId: bd5ea16b97e91cb620fed0e10b7d9b3a8a943a52
+        vcpkgTriplet: ${{ env.triplet }}
+
+    - run: |
+        $VCPKG_ROOT/vcpkg install libxml2:${{ env.triplet }}
+      shell: bash
+
+    - name: Initialize MSVC Code Analysis
+      uses: microsoft/msvc-code-analysis-action@beta
+      with:
+        results: ${{ env.build-dir }}
+        ruleset: All.ruleset
+
+    - name: Build project
+      run: cmake ${{ env.cmake-args }} -B . ${{ env.build-dir }}
+
+    - name: Upload SARIF files
+      uses: github/codeql-action/upload-sarif@v1
+      with:
+        sarif_file: ${{ env.build-dir }}
