@@ -9,8 +9,8 @@ on:
 env:
   triplet: x64-windows
   config: x64-DebugWithTests
-#   cmake-args: -DINSTALL_GTEST=OFF -DBUILD_TESTING=ON -DBUILD_TRANSPORT_CURL=ON -DBUILD_STORAGE_SAMPLES=ON
-#   build-dir: {{ github.workspace }}/out/build/x64-DebugWithTests
+  cmake-args: -DINSTALL_GTEST=OFF -DBUILD_TESTING=ON -DBUILD_TRANSPORT_CURL=ON -DBUILD_STORAGE_SAMPLES=ON
+  build-dir: out/build/x64-DebugWithTests
 
 jobs:
   build:
@@ -31,16 +31,16 @@ jobs:
       run: $VCPKG_ROOT/vcpkg install libxml2:${{ env.triplet }}
       shell: bash
 
-    # - name: Initialize MSVC Code Analysis
-    #   uses: microsoft/msvc-code-analysis-action@beta
-    #   with:
-    #     results: ${{ env.build-dir }}
-    #     ruleset: MinimumRecommendRules.ruleset
+    - name: Initialize MSVC Code Analysis
+      uses: microsoft/msvc-code-analysis-action@beta
+      with:
+        results: ${{ env.build-dir }}
+        ruleset: MinimumRecommendRules.ruleset
 
-    # - name: Build project
-    #   run: cmake ${{ env.cmake-args }} -B . ${{ env.build-dir }}
+    - name: Build project
+      run: cmake ${{ env.cmake-args }} -B . ${{ env.build-dir }}
 
-    # - name: Upload SARIF files
-    #   uses: github/codeql-action/upload-sarif@v1
-    #   with:
-    #     sarif_file: ${{ env.build-dir }}
+    - name: Upload SARIF files
+      uses: github/codeql-action/upload-sarif@v1
+      with:
+        sarif_file: ${{ env.build-dir }}
