@@ -27,9 +27,9 @@ jobs:
         vcpkgGitCommitId: bd5ea16b97e91cb620fed0e10b7d9b3a8a943a52
         vcpkgTriplet: ${{ env.triplet }}
 
-    # - run: |
-    #     $VCPKG_ROOT/vcpkg install libxml2:${{ env.triplet }}
-    #   shell: bash
+    - name: Install VCPKG dependencies
+      run: $VCPKG_ROOT/vcpkg install libxml2:${{ env.triplet }}
+      shell: bash
 
     # - name: Initialize MSVC Code Analysis
     #   uses: microsoft/msvc-code-analysis-action@beta
