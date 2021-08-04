@@ -35,7 +35,7 @@ jobs:
       uses: microsoft/msvc-code-analysis-action@beta
       with:
         results: ${{ env.build-dir }}
-        ruleset: MinimumRecommendRules.ruleset
+        ruleset: MinimumRecommendedRules.ruleset
 
     - name: Build project
       run: cmake ${{ env.cmake-args }} -B . ${{ env.build-dir }}
